@@ -1,82 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Personajes de Rick y Morty</title>
     <style>
-    body{
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 20px;
-        padding: 0;
-    }
-    .personaje{
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-        cursor: pointer;
-    }
-    .personaje img{
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 15px;
-    }
-    .personaje h3{
-        margin: 0;
-    }
+        /* Estilo general del cuerpo de la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        /* Estilo para cada personaje en la lista */
+        .personaje {
+            display: flex;  /* Utilizamos flexbox para organizar la imagen y el texto */
+            align-items: center;  /* Centra el contenido verticalmente */
+            margin-bottom: 10px;  /* Espaciado entre personajes */
+            padding: 10px;
+            border: 1px solid #ddd;  /* Borde gris alrededor de cada personaje */
+            border-radius: 8px;  /* Bordes redondeados */
+            background-color: #f9f9f9;  /* Fondo gris claro */
+            cursor: pointer;  /* Cambia el cursor al pasar sobre el personaje para indicar que es clickeable */
+        }
+
+        /* Estilo de la imagen del personaje */
+        .personaje img {
+            width: 50px;  /* Ancho de la imagen */
+            height: 50px;  /* Alto de la imagen */
+            border-radius: 50%;  /* Hace que la imagen sea circular */
+            margin-right: 15px;  /* Espacio a la derecha de la imagen */
+        }
+
+        /* Estilo para los encabezados (nombre del personaje) */
+        .personaje h3 {
+            margin: 0;  /* Eliminamos márgenes para que no haya espacios extra */
+        }
     </style>
 </head>
 <body>
-    <h1>Proy Valentina - Personajes Rick and Morty</h1>
-    <!--contenedor donde se insertaran los personajes -->
+    <h1>Personajes de Rick y Morty</h1>
+    <!-- Contenedor donde se insertarán los personajes -->
     <div id="contenedor-personajes"></div>
 
     <script>
-        //url de la api de rick and morty para obtener los personajes
-        const urlApi = "https://rickandmortyapi.com/api/character"
-        const contenedorPersonajes = document.getElementById("contenedor-personajes")
+        // URL de la API de Rick and Morty para obtener los personajes
+        const urlApi = 'https://rickandmortyapi.com/api/character';
 
-        async function obtenerPersonajes(){
+        // Obtenemos el contenedor en el HTML donde se mostrarán los personajes
+        const contenedorPersonajes = document.getElementById('contenedor-personajes');
 
+        // Función asincrónica para obtener los personajes desde la API
+        async function obtenerPersonajes() {
             try {
-                const respuesta = await fetch(urlApi)
+                // Realizamos la solicitud HTTP utilizando 'fetch' para obtener los datos de la API
+                const respuesta = await fetch(urlApi);
 
-                const datos = await respuesta.json()
+                // Si la respuesta no es exitosa, lanzamos un error
+                if (!respuesta.ok) {
+                    throw new Error('Error al obtener los datos de la API');
+                }
 
-                mostrarPersonajes(datos.results)
-                
+                // Convertimos la respuesta en formato JSON
+                const datos = await respuesta.json();
+
+                // Llamamos a la función 'mostrarPersonajes' pasando el array de personajes
+                mostrarPersonajes(datos.results);
+
             } catch (error) {
-                
+                // Si hay algún error, lo mostramos en la consola y mostramos un mensaje de error en la página
+                console.error(error);
+                contenedorPersonajes.innerHTML = `<p>Ocurrió un error al cargar los personajes.</p>`;
             }
-
         }
 
-        async function mostrarPersonajes(personajes){
+        // Función para mostrar los personajes en el HTML
+        function mostrarPersonajes(personajes) {
+            // Iteramos sobre cada personaje en el array de personajes
             personajes.forEach(personaje => {
-                const divPersonaje = document.createElement('div')
-                divPersonaje.classList.add("personaje")
-                divPersonaje.innerHTML = `
-                <img src ="${personaje.image}">
-                <div>
-                    <h3>${personaje.name}</h3>
-                    <p>Estado: ${personaje.status}</p>
-                    <p>Especie: ${personaje.species}</p>
-                </div>
-                `
 
-   
-                contenedorPersonajes.appendChild(divPersonaje)
+                // Creamos un nuevo elemento DIV para cada personaje
+                const divPersonaje = document.createElement('div');
+
+                // Le asignamos la clase 'personaje' para darle estilo
+                divPersonaje.classList.add('personaje');
+                
+                // Insertamos el contenido HTML con la información del personaje dentro del DIV
+                divPersonaje.innerHTML = `
+                    <img src="${personaje.image}" alt="${personaje.name}"> <!-- Imagen del personaje -->
+                    <div>
+                        <h3>${personaje.name}</h3> <!-- Nombre del personaje -->
+                        <p>Estado: ${personaje.status}</p> <!-- Estado del personaje -->
+                        <p>Especie: ${personaje.species}</p> <!-- Especie del personaje -->
+                    </div>
+                `;
+
+                // Agregamos un evento 'click' al DIV para redirigir a la página de detalles
+                divPersonaje.addEventListener('click', () => {
+                    // Al hacer clic, se redirige a la página de detalles pasando el ID del personaje como parámetro en la URL
+                    window.location.href = `detalles.html?id=${personaje.id}`;
+                });
+
+                // Añadimos el DIV del personaje como hijo del contenedor de personajes
+                contenedorPersonajes.appendChild(divPersonaje);
             });
         }
 
-        obtenerPersonajes()
-
+        // Ejecutamos la función que obtiene los personajes al cargar la página
+        obtenerPersonajes();
     </script>
-
 </body>
 </html>
