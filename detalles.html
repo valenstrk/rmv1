@@ -1,11 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Detalles del Personaje</title>
+    <style>
+        /* Estilo general del cuerpo de la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        /* Estilo para mostrar los detalles de cada personaje */
+        .personaje-detalle {
+            display: flex;  /* Usamos flexbox para organizar la imagen y la información del personaje */
+            align-items: center;  /* Centra el contenido verticalmente */
+            margin-bottom: 20px;  /* Espaciado entre los detalles del personaje */
+            padding: 20px;
+            border: 1px solid #ddd;  /* Borde gris claro */
+            border-radius: 8px;  /* Bordes redondeados */
+            background-color: #f9f9f9;  /* Fondo gris claro */
+        }
+
+        /* Estilo de la imagen del personaje */
+        .personaje-detalle img {
+            width: 150px;  /* Ancho de la imagen */
+            height: 150px;  /* Alto de la imagen */
+            border-radius: 50%;  /* Hace que la imagen sea circular */
+            margin-right: 30px;  /* Espacio a la derecha de la imagen */
+        }
+
+        /* Estilo del encabezado (nombre del personaje) */
+        .personaje-detalle h3 {
+            margin: 0;  /* Eliminamos márgenes para un diseño más limpio */
+        }
+
+        /* Estilo para los párrafos con detalles del personaje */
+        .personaje-detalle p {
+            margin: 5px 0;  /* Espaciado entre los párrafos */
+        }
+    </style>
 </head>
 <body>
-    
+    <h1>Detalles del Personaje</h1>
+
+    <!-- Contenedor donde se mostrarán los detalles del personaje -->
+    <div id="detalle-personaje" class="personaje-detalle"></div>
+
+    <!-- Botón para regresar a la página principal (tienda) -->
+    <button onclick="regresar()">Volver a la tienda</button>
+
+    <script>
+        // Obtenemos el contenedor donde se mostrarán los detalles del personaje
+        const contenedorDetalle = document.getElementById('detalle-personaje');
+
+        // Obtenemos los parámetros de la URL (en este caso, el ID del personaje)
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extraemos el ID del personaje de la URL
+        const personajeId = urlParams.get('id');
+
+        // Función asincrónica para obtener los detalles del personaje usando la API de Rick y Morty
+        async function obtenerDetallePersonaje(id) {
+            // URL específica de la API para obtener los detalles del personaje según su ID
+            const url = `https://rickandmortyapi.com/api/character/${id}`;
+
+            try {
+                // Realizamos la solicitud a la API para obtener los detalles del personaje
+                const respuesta = await fetch(url);
+
+                // Si la respuesta no es exitosa, lanzamos un error
+                if (!respuesta.ok) {
+                    throw new Error('Error al obtener los detalles del personaje');
+                }
+
+                // Convertimos la respuesta en formato JSON
+                const personaje = await respuesta.json();
+
+                // Llamamos a la función para mostrar los detalles del personaje en la página
+                mostrarDetallePersonaje(personaje);
+            } catch (error) {
+                // Si ocurre algún error, lo mostramos en la consola y mostramos un mensaje en la página
+                console.error(error);
+                contenedorDetalle.innerHTML = `<p>Ocurrió un error al cargar los detalles del personaje.</p>`;
+            }
+        }
+
+        // Función para mostrar los detalles del personaje en la página
+        function mostrarDetallePersonaje(personaje) {
+            // Insertamos el contenido HTML con los detalles del personaje dentro del contenedor
+            contenedorDetalle.innerHTML = `
+                <img src="${personaje.image}" alt="${personaje.name}"> <!-- Imagen del personaje -->
+                <div>
+                    <h3>${personaje.name}</h3> <!-- Nombre del personaje -->
+                    <p>Estado: ${personaje.status}</p> <!-- Estado del personaje -->
+                    <p>Especie: ${personaje.species}</p> <!-- Especie del personaje -->
+                    <p>Género: ${personaje.gender}</p> <!-- Género del personaje -->
+                    <p>Ubicación: ${personaje.location.name}</p> <!-- Ubicación actual del personaje -->
+                    <p>Primera aparición: ${personaje.created}</p> <!-- Fecha de la primera aparición del personaje -->
+                </div>
+            `;
+        }
+
+        // Función para regresar a la página principal (tienda)
+        function regresar() {
+            // Redirige a la página 'index.html' (la página principal)
+            window.location.href = 'index.html';
+        }
+
+        // Llamamos a la función que obtiene los detalles del personaje usando el ID extraído de la URL
+        obtenerDetallePersonaje(personajeId);
+    </script>
 </body>
 </html>
